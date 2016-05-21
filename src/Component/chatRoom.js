@@ -15,7 +15,9 @@ import {
 var api =  require('../Api/chatApi');
 var Separator = require('../Helper/Separator');
 var Badge = require('./Badge');
-
+import config from '../../config'
+import Firebase from 'firebase';
+const FireRef = new Firebase(`${ config.FIREBASE_ROOT }`);
 
 var styles = StyleSheet.create({
   container: {
@@ -60,6 +62,18 @@ class chatRoom extends Component{
       error: ''
     }
   }
+  componentDidMount(){
+    let count= 0;
+    api.getAllUser()
+    .then((res) => {
+      res.forEach(
+      FireRef.orderByChild("online").equalTo(true).set({
+        connectWith:this.props.name,
+        online:'connected'
+      })
+    );
+    })
+  }
   handleChange(e){
     this.setState({
       message: e.nativeEvent.text
@@ -67,22 +81,35 @@ class chatRoom extends Component{
   }
   handleSubmit(){
     var message = this.state.message;
+
+    if(message != ''){
+      this.nm = FireRef.child(this.props.name);
+      this.nm.child("messages").push(message);
+    }
+
+    api.getData(this.props.name)
+    .then((data) => {
+      this.setState({
+        dataSource: this.ds.cloneWithRows(data)
+        })
+    });
+
     this.setState({
       message: ''
     });
-    api.addmessage(this.props.name, message)
-      .then((data) => {
-        api.getInfo(this.props.name)
-          .then((data) => {
-            this.setState({
-              dataSource: this.ds.cloneWithRows(data)
-            })
-          });
-      })
-      .catch((error) => {
-        console.log('Request failed', error);
-        this.setState({error})
-      });
+    // api.addmessage(this.props.name, message)
+    //   .then((data) => {
+    //     api.getInfo(this.props.name)
+    //       .then((data) => {
+    //         this.setState({
+    //           dataSource: this.ds.cloneWithRows(data)
+    //         })
+    //       });
+    //   })
+    //   .catch((error) => {
+    //     console.log('Request failed', error);
+    //     this.setState({error})
+    //   });
   }
   renderRow(rowData){
     return (

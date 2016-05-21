@@ -1,7 +1,19 @@
 var api = {
   getBio(name){
     name = name.toLowerCase().trim();
+    // console.log("name"+name);
     var url = `https://shining-torch-2907.firebaseio.com/${name}.json`;
+    // console.log('URL'+ url);
+    return fetch(url).then((res) => res.json())
+  },
+  getData(name){
+    name = name.toLowerCase().trim();
+    var url = `https://shining-torch-2907.firebaseio.com/${name}/messages.json`;
+    return fetch(url).then((res) => res.json())
+  },
+  getAllUser(){
+    name = name.toLowerCase().trim();
+    var url = `https://shining-torch-2907.firebaseio.com/`;
     return fetch(url).then((res) => res.json())
   },
   getInfo(name){
@@ -21,7 +33,7 @@ var api = {
   addmessage(name, ms){
     name = name.toLowerCase().trim();
     console.log("YOMS");
-    var url = `https://shining-torch-2907.firebaseio.com/qqqq/*/messages`;
+    var url = `https://shining-torch-2907.firebaseio.com/`;
     return fetch(url, {
       method: 'POST',
       body: JSON.stringify(ms)})

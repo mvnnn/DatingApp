@@ -13,7 +13,7 @@ var chatRoom = require('./chatRoom');
 import config from '../../config'
 // var sec = require('./sec');
 import Firebase from 'firebase';
-const aaa = new Firebase(`${ config.FIREBASE_ROOT }/aaaa`);
+const FireRef = new Firebase(`${ config.FIREBASE_ROOT }`);
 
 class Login extends Component {
   constructor(props){
@@ -39,11 +39,10 @@ class Login extends Component {
     dob: e.nativeEvent.text
   })
   }
-  handleResponse(res, name){
+  handleResponse(ms, name){
     console.log("handleResponse");
     console.log(name);
-    // console.log("ddd");
-    ms = {};
+    console.log("ms"+ms);
     this.props.navigator.push({
       id:'second',
       passProps: {
@@ -54,18 +53,29 @@ class Login extends Component {
   }
 
   handleAdd(info, name, password, dob){
+    // var nameSnapshot = FireRef.child(name);
+    // var info = nameSnapshot.val();
+    console.log(info);
     if(info === null){
-    api.addInfo(name, password, dob)
-      .then((jsonRes) => this.handleResponse(jsonRes, name))
-      .catch((err) => {
-        console.log("Error");
-      })
+
+      FireRef.child(name).set({
+        name: name,
+        password: password,
+        dob: dob,
+        online: true,
+        connectWith:'',
+        messages:''
+      });
+
+      this.mss = {};
+      this.handleResponse(mss, name);
+    // api.addInfo(name, password, dob)
+    //   .then((jsonRes) => this.handleResponse(jsonRes, name))
+    //   .catch((err) => {
+    //     console.log("Error");
+    //   })
     }else{
-      api.getInfo(name)
-      .then((jsonRes) => this.handleResponse(jsonRes, name))
-      .catch((err) => {
-        console.log("getInfo Error");
-      })
+      this.handleResponse(info.messages, name);
     }
   }
 
