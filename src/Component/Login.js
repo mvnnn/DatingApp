@@ -57,7 +57,7 @@ class Login extends Component {
     // var info = nameSnapshot.val();
     console.log(info);
     if(info === null){
-
+      console.log("haha");
       FireRef.child(name).set({
         name: name,
         password: password,
@@ -66,7 +66,6 @@ class Login extends Component {
         connectWith:'',
         messages:''
       });
-
       const mss = [{"0":''}];
       this.handleResponse(mss, name);
     // api.addInfo(name, password, dob)

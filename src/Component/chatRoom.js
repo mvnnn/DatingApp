@@ -59,9 +59,12 @@ class chatRoom extends Component{
     this.state = {
       dataSource: this.ds.cloneWithRows(this.props.messages),
       message: '',
-      error: ''
+      error: '',
+      connectedUser:'',
+      count:0
     }
     this.msg = this.props.messages;
+    this.CUData = [];
   }
 
   componentWillMount() {
@@ -74,31 +77,36 @@ class chatRoom extends Component{
     this.setState({
       dataSource: this.ds.cloneWithRows(items)
     });
-    console.log("hahaha");
-    console.log(FireRef);
   });
-
-  //   var avlbUser = Firebase.orderByChild("available").equalTo(true);
-  //   var getUser = avlbUser.startAt().limit(1);
-  //   if(getUser != null){
-  //     this.ref.update({connectWith:getUser.child("name").val()})
-  //     FireRef.child(getUser).update({available:false, connectWith:this.props.name})
-  //   }
-  //   else{
-  //     this.ref.update({available:true})
-  //   }
+    console.log("hahaha");
+    console.log(this.msg);
+    api.getAllUser()
+    .then((res)=> {
+      console.log(res);
+      for(i in res){
+        console.log(res[i]["available"]);
+        if(res[i]["available"] === true){
+          FireRef.child(res[i]["name"]).update({
+            connectWith:this.props.name
+            // available:false
+          });
+          FireRef.child(this.props.name).update({
+            connectWith:res[i]["name"],
+            available:false
+          });
+          this.setState({count:1, connectedUser:res[i]["name"]});
+          break;
+        }
+      }
+      if(this.state.count === 0){
+        console.log("No User available");
+        FireRef.child(this.props.name).update({
+          available:true
+        });
+      }
+    });
   }
-  // componentDidMount(){
-  //   var avlbUser = Firebase.orderByChild("available").equalTo(true);
-  //   var getUser = avlbUser.startAt().limit(1);
-  //   if(getUser != null){
-  //     this.ref.update({connectWith:getUser.child("name").val()})
-  //     FireRef.child(getUser).update({available:false, connectWith:this.props.name})
-  //   }
-  //   else{
-  //     this.ref.update({available:true})
-  //   }
-  // }
+
   handleChange(e){
     this.setState({
       message: e.nativeEvent.text
@@ -113,6 +121,21 @@ class chatRoom extends Component{
       this.nm.update({
         messages : this.msg
       });
+      console.log("Outside");
+
+      api.getMSG(this.state.connectedUser)
+      .then((res)=>{
+        if(res === null){
+          this.CUData = [{"0":''}];
+        }
+        else{this.CUData = res;}
+        console.log("RES:"+res);
+        this.CUData.push(message);
+        FireRef.child(this.state.connectedUser).update({
+          messages : this.CUData
+        });
+      });
+
     }
 
     // api.getData(this.props.name)
@@ -172,7 +195,7 @@ class chatRoom extends Component{
           <ListView
             dataSource={this.state.dataSource}
             renderRow={this.renderRow}
-            renderHeader={() => <Badge userInfo={this.props.name}/>}/>
+            renderHeader={() => <Badge userInfo={this.state.connectedUser}/>}/>
         {this.footer()}
       </View>
     )
