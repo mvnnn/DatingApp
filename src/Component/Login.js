@@ -62,12 +62,12 @@ class Login extends Component {
         name: name,
         password: password,
         dob: dob,
-        online: true,
+        available: false,
         connectWith:'',
         messages:''
       });
 
-      this.mss = {};
+      const mss = [{"0":''}];
       this.handleResponse(mss, name);
     // api.addInfo(name, password, dob)
     //   .then((jsonRes) => this.handleResponse(jsonRes, name))

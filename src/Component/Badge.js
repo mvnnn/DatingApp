@@ -35,7 +35,7 @@ class Badge extends Component{
   render(){
     return (
       <View style={styles.container}>
-        <Text style={styles.name}> {this.props.userInfo} </Text>
+        <Text style={styles.name}> ChatRoom </Text>
       </View>
     )
   }

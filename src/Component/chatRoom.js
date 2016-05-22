@@ -61,19 +61,44 @@ class chatRoom extends Component{
       message: '',
       error: ''
     }
+    this.msg = this.props.messages;
   }
-  componentDidMount(){
-    let count= 0;
-    api.getAllUser()
-    .then((res) => {
-      res.forEach(
-      FireRef.orderByChild("online").equalTo(true).set({
-        connectWith:this.props.name,
-        online:'connected'
-      })
-    );
-    })
+
+  componentWillMount() {
+  this.ref = FireRef.child(this.props.name);
+  this.ref.child("messages").on('value', (snapshot) => {
+    var items = [];
+    snapshot.forEach(function(child) {
+      items.push(child.val());
+    });
+    this.setState({
+      dataSource: this.ds.cloneWithRows(items)
+    });
+    console.log("hahaha");
+    console.log(FireRef);
+  });
+
+  //   var avlbUser = Firebase.orderByChild("available").equalTo(true);
+  //   var getUser = avlbUser.startAt().limit(1);
+  //   if(getUser != null){
+  //     this.ref.update({connectWith:getUser.child("name").val()})
+  //     FireRef.child(getUser).update({available:false, connectWith:this.props.name})
+  //   }
+  //   else{
+  //     this.ref.update({available:true})
+  //   }
   }
+  // componentDidMount(){
+  //   var avlbUser = Firebase.orderByChild("available").equalTo(true);
+  //   var getUser = avlbUser.startAt().limit(1);
+  //   if(getUser != null){
+  //     this.ref.update({connectWith:getUser.child("name").val()})
+  //     FireRef.child(getUser).update({available:false, connectWith:this.props.name})
+  //   }
+  //   else{
+  //     this.ref.update({available:true})
+  //   }
+  // }
   handleChange(e){
     this.setState({
       message: e.nativeEvent.text
@@ -83,16 +108,19 @@ class chatRoom extends Component{
     var message = this.state.message;
 
     if(message != ''){
+      this.msg.push(message);
       this.nm = FireRef.child(this.props.name);
-      this.nm.child("messages").push(message);
+      this.nm.update({
+        messages : this.msg
+      });
     }
 
-    api.getData(this.props.name)
-    .then((data) => {
-      this.setState({
-        dataSource: this.ds.cloneWithRows(data)
-        })
-    });
+    // api.getData(this.props.name)
+    // .then((data) => {
+    //   this.setState({
+    //     dataSource: this.ds.cloneWithRows(data)
+    //     })
+    // });
 
     this.setState({
       message: ''
