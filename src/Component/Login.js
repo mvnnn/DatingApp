@@ -42,12 +42,18 @@ class Login extends Component {
   handleResponse(ms, name){
     console.log("handleResponse");
     console.log(name);
-    console.log("ms"+ms);
+    console.log(ms);
+    this.pp = ms;
+    if(ms === ""){
+      console.log("nanana");
+      this.pp = [{"text":'', "user":name, "time":''}];
+    }
+    console.log("ms"+this.pp);
     this.props.navigator.push({
       id:'second',
       passProps: {
             name: name,
-            messages: ms
+            messages: this.pp
           }
     });
   }
@@ -66,7 +72,7 @@ class Login extends Component {
         connectWith:'',
         messages:''
       });
-      const mss = [{"0":''}];
+      const mss = [{"text":'', "user":'', "time":''}];
       this.handleResponse(mss, name);
     // api.addInfo(name, password, dob)
     //   .then((jsonRes) => this.handleResponse(jsonRes, name))

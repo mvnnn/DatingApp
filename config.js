@@ -1,3 +1,3 @@
 module.exports = {
-  FIREBASE_ROOT: 'https://shining-torch-2907.firebaseio.com/user/'
+  FIREBASE_ROOT: 'https://clear-app-01.firebaseio.com/user/'
 }

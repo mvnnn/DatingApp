@@ -45,6 +45,20 @@ var styles = StyleSheet.create({
   rowContainer: {
     padding: 10,
   },
+  rowContainer1: {
+    padding: 10,
+    flexDirection: 'row',
+  },
+  forUser:{
+    flex:3,
+    fontSize:18,
+    color: "#FF0000",
+  },
+  forTime:{
+    flex:4,
+    justifyContent: 'flex-end',
+    color: "#00FF00",
+  },
   footerContainer: {
     backgroundColor: '#E3E3E3',
     alignItems: 'center',
@@ -64,7 +78,7 @@ class chatRoom extends Component{
       count:0
     }
     this.msg = this.props.messages;
-    this.CUData = [];
+    this.CUData = [{"text":'', "user":'', "time":''}];
   }
 
   componentWillMount() {
@@ -116,7 +130,8 @@ class chatRoom extends Component{
     var message = this.state.message;
 
     if(message != ''){
-      this.msg.push(message);
+      console.log("MSG::"+this.msg);
+      this.msg.push({"text":message, "user":this.props.name, "time":new Date()});
       this.nm = FireRef.child(this.props.name);
       this.nm.update({
         messages : this.msg
@@ -126,11 +141,11 @@ class chatRoom extends Component{
       api.getMSG(this.state.connectedUser)
       .then((res)=>{
         if(res === null){
-          this.CUData = [{"0":''}];
+          this.CUData = [{"0":{"text":'', "user":this.props.name, "time":''}}];
         }
         else{this.CUData = res;}
         console.log("RES:"+res);
-        this.CUData.push(message);
+        this.CUData.push({"text":message, "user":this.props.name, "time":new Date()});
         FireRef.child(this.state.connectedUser).update({
           messages : this.CUData
         });
@@ -165,8 +180,12 @@ class chatRoom extends Component{
   renderRow(rowData){
     return (
       <View>
+        <View style={styles.rowContainer1}>
+          <Text style={styles.forUser}> {rowData.user} </Text>
+          <Text style={styles.forTime}> {rowData.time} </Text>
+        </View>
         <View style={styles.rowContainer}>
-          <Text> {rowData} </Text>
+          <Text> {rowData.text} </Text>
         </View>
         <Separator />
       </View>
