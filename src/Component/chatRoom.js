@@ -78,7 +78,7 @@ class chatRoom extends Component{
       count:0
     }
     this.msg = this.props.messages;
-    this.CUData = [{"text":'', "user":'', "time":''}];
+    this.CUData = [{"text":'', "user":this.props.name, "time":''}];
   }
 
   componentWillMount() {
